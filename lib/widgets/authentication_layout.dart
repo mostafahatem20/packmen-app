@@ -15,6 +15,7 @@ class AuthenticationLayout extends StatelessWidget {
   final Widget? form;
   final bool showTermsText;
   final void Function()? onMainButtonTapped;
+  final void Function()? onAlreadyAccountTapped;
   final void Function()? onCreateAccountTapped;
   final void Function()? onForgotPassword;
   final void Function()? onBackPressed;
@@ -36,6 +37,7 @@ class AuthenticationLayout extends StatelessWidget {
     this.onSignInWithApple,
     this.onSignInWithGoogle,
     this.validationMessage,
+    this.onAlreadyAccountTapped,
     this.showTermsText = false,
     this.busy = false,
   }) : super(key: key);
@@ -66,10 +68,23 @@ class AuthenticationLayout extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: SizedBox(
-              width: context.width * 0.7,
-              child: BoxText.body(
-                subtitle!,
-                color: Colors.grey.shade400,
+              width: context.width * 0.8,
+              child: Wrap(
+                spacing: 8.0, // Adjust the spacing between items as needed
+                children: [
+                  BoxText.body(
+                    subtitle!,
+                    color: Colors.grey.shade400,
+                  ),
+                  if (onAlreadyAccountTapped != null)
+                    GestureDetector(
+                      onTap: onAlreadyAccountTapped,
+                      child: BoxText.body(
+                        'Already have an account?',
+                        color: AppTheme.themeColor,
+                      ),
+                    ),
+                ],
               ),
             ),
           ),

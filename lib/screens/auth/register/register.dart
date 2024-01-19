@@ -19,6 +19,9 @@ class Register extends GetView<AuthController> {
                 }
               : null,
           onMainButtonTapped: () {},
+          onAlreadyAccountTapped: () {
+            Get.toNamed(AppRoutes.loginScreen);
+          },
           title: 'Create Account',
           subtitle:
               'Enter your name, phone number, email and password for sign up',
