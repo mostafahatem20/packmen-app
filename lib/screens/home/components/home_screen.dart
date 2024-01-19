@@ -1,5 +1,6 @@
 import 'package:packmen_app/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:packmen_app/screens/home/components/attendance.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -32,11 +33,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool isLightMode = brightness == Brightness.light;
     return Scaffold(
-      backgroundColor:
-          isLightMode == true ? AppTheme.white : AppTheme.nearlyBlack,
+      backgroundColor: HexColor('#f5f5f4'),
       body: FutureBuilder<bool>(
         future: getData(),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -58,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         if (!snapshot.hasData) {
                           return const SizedBox();
                         } else {
-                          return const SizedBox();
+                          return const Attendance();
                         }
                       },
                     ),
@@ -73,9 +71,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   Widget appBar() {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool isLightMode = brightness == Brightness.light;
-    return SizedBox(
+    return Container(
+      color: AppTheme.themeColor,
       height: AppBar().preferredSize.height,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -95,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   'Packmen',
                   style: TextStyle(
                     fontSize: 22,
-                    color: isLightMode ? AppTheme.darkText : AppTheme.white,
+                    color: HexColor('#D0AD5E'),
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -107,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             child: Container(
               width: AppBar().preferredSize.height - 8,
               height: AppBar().preferredSize.height - 8,
-              color: isLightMode ? Colors.white : AppTheme.nearlyBlack,
+              color: AppTheme.themeColor,
               child: const Material(
                 color: Colors.transparent,
                 child: SizedBox(),

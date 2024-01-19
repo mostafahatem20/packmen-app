@@ -12,3 +12,7 @@ export 'package:packmen_app/core/utils/error_model.dart';
 export 'dart:convert';
 export 'package:flutter_screenutil/flutter_screenutil.dart';
 export 'package:packmen_app/theme/app_decoration.dart';
+export 'package:intl/intl.dart';
+export 'package:slide_to_act/slide_to_act.dart';
+export 'package:url_launcher/url_launcher.dart';
+export 'package:google_maps_flutter/google_maps_flutter.dart';
