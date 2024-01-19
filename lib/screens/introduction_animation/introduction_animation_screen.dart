@@ -36,7 +36,6 @@ class _IntroductionAnimationScreenState
 
   @override
   Widget build(BuildContext context) {
-    print(_animationController?.value);
     return Scaffold(
       // backgroundColor: HexColor('#D0AD5E'),
       backgroundColor: HexColor('#f5f5f4'),

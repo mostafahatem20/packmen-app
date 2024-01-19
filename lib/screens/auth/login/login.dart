@@ -21,7 +21,9 @@ class Login extends GetView<AuthController> {
           onCreateAccountTapped: () {
             Get.toNamed(AppRoutes.registerScreen);
           },
-          onMainButtonTapped: () {},
+          onMainButtonTapped: () {
+            Get.offAllNamed(AppRoutes.homeScreen);
+          },
           title: 'Welcome',
           subtitle: 'Enter your email address to log in.',
           mainButtonTitle: 'LOG IN',
