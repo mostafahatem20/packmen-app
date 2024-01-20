@@ -6,8 +6,11 @@ import 'package:packmen_app/core/app_export.dart';
 
 class HomeController extends BaseController {
   Rx<bool> isLoading = false.obs;
+  Rx<bool> scan = false.obs;
   RxString checkIn = "--/--".obs;
   RxString checkOut = "--/--".obs;
+  RxList<String>? checklist;
+  RxList<bool>? checklistBool;
   RxList<Map<String, Object>> tasks = [
     {
       'title': 'Load box',
@@ -17,6 +20,7 @@ class HomeController extends BaseController {
       'ids': ['DHL XXYYZZ', 'GLS ZZYYXX', 'UPS AABBCD', 'FedEx CCDDEE'],
       'status': 'current',
       'boxSize': 'Large',
+      'type': '1'
     },
     {
       'title': 'Load box',
@@ -26,6 +30,7 @@ class HomeController extends BaseController {
       'ids': ['DHL XXYYZZ', 'GLS ZZYYXX', 'UPS AABBCD', 'FedEx CCDDEE'],
       'status': 'current',
       'boxSize': 'Large',
+      'type': '2'
     },
     {
       'title': 'Load box',
@@ -35,6 +40,7 @@ class HomeController extends BaseController {
       'ids': ['DHL XXYYZZ', 'GLS ZZYYXX', 'UPS AABBCD', 'FedEx CCDDEE'],
       'status': 'current',
       'boxSize': 'Large',
+      'type': '3'
     },
     {
       'title': 'Load box',
@@ -83,8 +89,21 @@ class HomeController extends BaseController {
     checkIn.value = DateFormat('hh:mm').format(DateTime.now());
   }
 
+  void setScan(bool v) {
+    scan.value = v;
+  }
+
   void setCheckOut() {
     checkOut.value = DateFormat('hh:mm').format(DateTime.now());
+  }
+
+  void setChecklist() {
+    checklist = ['Offload Box a1', 'Offload Box a2', 'Onload Box a3'].obs;
+    checklistBool = [false, false, false].obs;
+  }
+
+  void toggleChecklistBool(int index) {
+    checklistBool![index] = !checklistBool![index];
   }
 
   Future<void> getTasks() async {
