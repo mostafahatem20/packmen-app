@@ -64,7 +64,7 @@ class CustomButton extends StatelessWidget {
                       ),
                     Flexible(
                       child: Text(
-                        text!.tr,
+                        text!,
                         style: textStyle ?? AppTheme.body1,
                       ),
                     ),

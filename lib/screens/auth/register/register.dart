@@ -20,9 +20,11 @@ class Register extends GetView<AuthController> {
               : null,
           onMainButtonTapped: () {
             Get.offAllNamed(AppRoutes.loginScreen);
+            controller.clearRegistrationForm();
           },
           onAlreadyAccountTapped: () {
             Get.toNamed(AppRoutes.loginScreen);
+            controller.clearRegistrationForm();
           },
           title: 'Create Account',
           subtitle:

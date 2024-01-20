@@ -46,43 +46,43 @@ class AuthController extends BaseController {
 
   String? userNameValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return "validateUserNameField".tr;
+      return "This field is required!";
     }
     if (!GetUtils.hasMatch(value, r'^[a-zA-Z\s]+$')) {
-      return "userNameValidation".tr;
+      return "Only english alphabets are allowed";
     }
     return null;
   }
 
   String? phoneNumberValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return null;
+      return "This field is required!";
     }
-    if (GetUtils.isPhoneNumber(value)) {
-      return null;
+    if (!GetUtils.isPhoneNumber(value)) {
+      return "Phone number is not valid";
     }
-    return "invalidPhoneNumberErrorMsg".tr;
+    return null;
   }
 
   String? emailValidator(String? value) {
     if (GetUtils.isEmail(value!)) {
       return null;
     }
-    return "invalidEmailErrorMsg".tr;
+    return "Email is not valid";
   }
 
   String? passwordValidator(String? value) {
     if (isValidPassword(value!, isRequired: true)) {
       return null;
     }
-    return "weakPassword".tr;
+    return "Password is not strong enough";
   }
 
   String? confirmPasswordValidator(String? value) {
     if (value == userPasswordR.value.text) {
       return null;
     }
-    return "passwordMismatchErrorMsg".tr;
+    return "Passwords do not match";
   }
 
   Future<void> login() async {
@@ -104,12 +104,14 @@ class AuthController extends BaseController {
         Get.offAllNamed(AppRoutes.homeScreen);
       } else {
         CustomSnackBar.showCustomErrorSnackBar(
-            title: 'internalServerError'.tr, message: 'contactSupport'.tr);
+            title: 'Internal Server Error',
+            message: 'Please contact an administrator');
       }
     } catch (e) {
       Logger.log(e);
       CustomSnackBar.showCustomErrorSnackBar(
-          title: 'internalServerError'.tr, message: 'contactSupport'.tr);
+          title: 'Internal Server Error',
+          message: 'Please contact an administrator');
     } finally {
       isLoading.value = false;
     }
@@ -122,7 +124,8 @@ class AuthController extends BaseController {
     } catch (e) {
       Logger.log(e);
       CustomSnackBar.showCustomErrorSnackBar(
-          title: 'internalServerError'.tr, message: 'contactSupport'.tr);
+          title: 'Internal Server Error',
+          message: 'Please contact an administrator');
     }
   }
 
@@ -132,35 +135,6 @@ class AuthController extends BaseController {
     user.value = UserModel();
     Get.offAllNamed(AppRoutes.loginScreen);
   }
-
-  // Future<void> register() async {
-  //   try {
-  //     isLoading.value = true;
-  //     Map<String, String> requestBody = {
-  //       "email": userEmailR.value.text,
-  //       "password": userPasswordR.value.text,
-  //       "name": userNameR.value.text,
-  //       "phoneNumber": userPhoneNumberR.value.text
-  //     };
-  //     requestBody.removeWhere((key, value) => value.isEmpty);
-  //     String body = json.encode(requestBody);
-  //     final response = await post('/auth/register', body);
-  //     if (response.statusCode == HttpStatus.created) {
-  //       clearRegistrationForm();
-  //       // Get.toNamed(AppRoutes.loginScreen);
-  //     } else {
-  //       final error = ErrorModel.fromJson(response.body);
-  //       CustomSnackBar.showCustomErrorSnackBar(
-  //           title: 'regFailed'.tr, message: error.message!);
-  //     }
-  //   } catch (e) {
-  //     Logger.log(e);
-  //     CustomSnackBar.showCustomErrorSnackBar(
-  //         title: 'internalServerError'.tr, message: 'contactSupport'.tr);
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
 
   clearRegistrationForm() {
     userEmailR.clear();

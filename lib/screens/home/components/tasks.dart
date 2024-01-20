@@ -1,5 +1,6 @@
 import 'package:packmen_app/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:packmen_app/screens/home/components/task.dart';
 import 'package:packmen_app/screens/home/components/tasks_list.dart';
 
 class Tasks extends StatefulWidget {
@@ -12,6 +13,7 @@ class Tasks extends StatefulWidget {
 class _TasksState extends State<Tasks> with TickerProviderStateMixin {
   AnimationController? animationController;
   bool multiple = true;
+  int index = -1;
 
   @override
   void initState() {
@@ -56,7 +58,24 @@ class _TasksState extends State<Tasks> with TickerProviderStateMixin {
                         if (!snapshot.hasData) {
                           return const SizedBox();
                         } else {
-                          return const TasksList();
+                          if (index == -1) {
+                            return TasksList(
+                              onTaskClick: (int i) {
+                                setState(() {
+                                  index = i;
+                                });
+                              },
+                            );
+                          } else {
+                            return Task(
+                              index: index,
+                              onBack: () {
+                                setState(() {
+                                  index = -1;
+                                });
+                              },
+                            );
+                          }
                         }
                       },
                     ),

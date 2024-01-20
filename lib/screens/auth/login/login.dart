@@ -42,7 +42,7 @@ class Login extends GetView<AuthController> {
                   ),
                   SizedBox(height: 15.h),
                   CustomTextField(
-                    labelText: 'Password'.tr,
+                    labelText: 'Password',
                     obscureText: controller.isPasswordHidden.value,
                     prefixIcon: Icon(
                       Icons.lock_outline,

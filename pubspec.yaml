@@ -45,6 +45,7 @@ dependencies:
   slide_to_act: ^2.0.2
   url_launcher: ^6.2.3
   google_maps_flutter: ^2.5.3
+  timeline_tile: ^2.0.0
 
 dev_dependencies:
   flutter_test:
