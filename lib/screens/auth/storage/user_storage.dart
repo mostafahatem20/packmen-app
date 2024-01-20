@@ -9,6 +9,11 @@ class UserStorage {
     await box.write(_userKey, user.toJson());
   }
 
+  static Future<void> saveToken(String token) async {
+    final box = GetStorage();
+    await box.write('token', token);
+  }
+
   static UserModel? getUser() {
     final box = GetStorage();
     final userData = box.read(_userKey);
@@ -18,8 +23,19 @@ class UserStorage {
     return null;
   }
 
+  static String? getToken() {
+    final box = GetStorage();
+    final token = box.read('token');
+    return token;
+  }
+
   static Future<void> removeUser() async {
     final box = GetStorage();
     await box.remove(_userKey);
+  }
+
+  static Future<void> removeToken() async {
+    final box = GetStorage();
+    await box.remove('token');
   }
 }

@@ -1,43 +1,29 @@
 class UserModel {
   int? id;
-  String? name;
+  String? role;
   String? email;
-  String? image;
-  String? phoneNumber;
 
   UserModel({
     this.id,
-    this.name,
+    this.role,
     this.email,
-    this.image,
-    this.phoneNumber,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-        id: json['id'],
-        name: json['name'],
-        email: json['email'],
-        image: json['image'],
-        phoneNumber: json['phoneNumber']);
+    return UserModel(id: json['id'], role: json['role'], email: json['email']);
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
+      'role': role,
       'email': email,
-      'image': image,
-      'phoneNumber': phoneNumber,
     };
   }
 
   Map<String, dynamic> toRequestBody() {
     return {
-      'name': name,
       'email': email,
-      'image': image,
-      'phoneNumber': phoneNumber,
     };
   }
 }

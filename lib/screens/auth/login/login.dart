@@ -12,35 +12,36 @@ class Login extends GetView<AuthController> {
     final canBack = navigator!.canPop();
     return Scaffold(
         backgroundColor: HexColor('#f5f5f4'),
-        body: AuthenticationLayout(
-          onBackPressed: canBack
-              ? () {
-                  Get.back();
-                }
-              : null,
-          onCreateAccountTapped: () {
-            Get.toNamed(AppRoutes.registerScreen);
-          },
-          onMainButtonTapped: () {
-            Get.offAllNamed(AppRoutes.homeScreen);
-          },
-          title: 'Welcome',
-          subtitle: 'Enter your email address to log in.',
-          mainButtonTitle: 'LOG IN',
-          form: Column(
-            children: [
-              CustomTextField(
-                keyboardType: TextInputType.emailAddress,
-                labelText: 'Email',
-                prefixIcon: Icon(
-                  Icons.email,
-                  color: AppTheme.themeColor,
-                  size: 28.sp,
-                ),
-                controller: controller.emailControllerL,
-              ),
-              SizedBox(height: 15.h),
-              Obx(() => CustomTextField(
+        body: Obx(() => AuthenticationLayout(
+              busy: controller.isLoading.value,
+              onBackPressed: canBack
+                  ? () {
+                      Get.back();
+                    }
+                  : null,
+              onCreateAccountTapped: () {
+                Get.toNamed(AppRoutes.registerScreen);
+              },
+              onMainButtonTapped: () {
+                controller.login();
+              },
+              title: 'Welcome',
+              subtitle: 'Enter your email address to log in.',
+              mainButtonTitle: 'LOG IN',
+              form: Column(
+                children: [
+                  CustomTextField(
+                    keyboardType: TextInputType.emailAddress,
+                    labelText: 'Email',
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: AppTheme.themeColor,
+                      size: 28.sp,
+                    ),
+                    controller: controller.emailControllerL,
+                  ),
+                  SizedBox(height: 15.h),
+                  CustomTextField(
                     labelText: 'Password'.tr,
                     obscureText: controller.isPasswordHidden.value,
                     prefixIcon: Icon(
@@ -61,10 +62,10 @@ class Login extends GetView<AuthController> {
                       ),
                     ),
                     controller: controller.passwordControllerL,
-                  )),
-            ],
-          ),
-          onForgotPassword: () {},
-        ));
+                  ),
+                ],
+              ),
+              onForgotPassword: () {},
+            )));
   }
 }

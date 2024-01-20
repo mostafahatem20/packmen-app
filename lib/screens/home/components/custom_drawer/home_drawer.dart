@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:packmen_app/core/app_export.dart';
+import 'package:packmen_app/screens/auth/controller/auth_controller.dart';
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer(
@@ -69,6 +70,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
   @override
   Widget build(BuildContext context) {
     var brightness = MediaQuery.of(context).platformBrightness;
+    final authController = Get.find<AuthController>();
     bool isLightMode = brightness == Brightness.light;
     return Scaffold(
       backgroundColor: AppTheme.notWhite.withOpacity(0.5),
@@ -161,7 +163,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
             children: <Widget>[
               ListTile(
                 title: const Text(
-                  'Sign Out',
+                  'Log Out',
                   style: TextStyle(
                     fontFamily: AppTheme.fontName,
                     fontWeight: FontWeight.w600,
@@ -175,7 +177,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   color: Colors.red,
                 ),
                 onTap: () {
-                  onTapped();
+                  authController.logout();
                 },
               ),
               SizedBox(
@@ -186,10 +188,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
         ],
       ),
     );
-  }
-
-  void onTapped() {
-    Get.offAllNamed(AppRoutes.loginScreen);
   }
 
   Widget inkwell(DrawerList listData) {

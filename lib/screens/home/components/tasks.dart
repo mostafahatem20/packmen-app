@@ -1,5 +1,6 @@
 import 'package:packmen_app/core/app_export.dart';
 import 'package:flutter/material.dart';
+import 'package:packmen_app/screens/home/components/tasks_list.dart';
 
 class Tasks extends StatefulWidget {
   const Tasks({Key? key}) : super(key: key);
@@ -55,10 +56,7 @@ class _TasksState extends State<Tasks> with TickerProviderStateMixin {
                         if (!snapshot.hasData) {
                           return const SizedBox();
                         } else {
-                          return Scaffold(
-                            backgroundColor: HexColor('#f5f5f4'),
-                            body: const SizedBox(),
-                          );
+                          return const TasksList();
                         }
                       },
                     ),

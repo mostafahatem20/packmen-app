@@ -18,7 +18,9 @@ class Register extends GetView<AuthController> {
                   Get.back();
                 }
               : null,
-          onMainButtonTapped: () {},
+          onMainButtonTapped: () {
+            Get.offAllNamed(AppRoutes.loginScreen);
+          },
           onAlreadyAccountTapped: () {
             Get.toNamed(AppRoutes.loginScreen);
           },

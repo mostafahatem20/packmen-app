@@ -1,4 +1,5 @@
 import 'package:packmen_app/core/app_export.dart';
+import 'package:packmen_app/middlewares/auth_guard.dart';
 import 'package:packmen_app/screens/auth/binding/auth_binding.dart';
 import 'package:packmen_app/screens/auth/login/login.dart';
 import 'package:packmen_app/screens/auth/register/register.dart';
@@ -32,9 +33,9 @@ class AppRoutes {
       ],
     ),
     GetPage(
-      name: homeScreen,
-      page: () => NavigationHomeScreen(),
-      bindings: [AuthBinding(), HomeBinding()],
-    ),
+        name: homeScreen,
+        page: () => NavigationHomeScreen(),
+        bindings: [AuthBinding(), HomeBinding()],
+        middlewares: [AuthGuard()]),
   ];
 }

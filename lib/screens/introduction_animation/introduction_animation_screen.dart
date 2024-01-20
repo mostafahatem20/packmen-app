@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:packmen_app/screens/auth/storage/user_storage.dart';
 import 'package:packmen_app/screens/introduction_animation/components/second_view.dart';
 import 'package:packmen_app/screens/introduction_animation/components/center_next_button.dart';
 import 'package:packmen_app/screens/introduction_animation/components/third_view.dart';
@@ -25,6 +28,12 @@ class _IntroductionAnimationScreenState
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 8));
     _animationController?.animateTo(0.0);
+    Timer(const Duration(milliseconds: 1000), () {
+      final token = UserStorage.getToken() ?? '';
+      if (token != '') {
+        Get.offAllNamed(AppRoutes.homeScreen);
+      }
+    });
     super.initState();
   }
 
