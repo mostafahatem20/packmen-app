@@ -7,76 +7,93 @@ import 'package:packmen_app/core/app_export.dart';
 class HomeController extends BaseController {
   Rx<bool> isLoading = false.obs;
   Rx<bool> scan = false.obs;
+  Rx<bool> door = false.obs;
   RxString checkIn = "--/--".obs;
   RxString checkOut = "--/--".obs;
-  RxList<String>? checklist;
-  RxList<bool>? checklistBool;
+  Rx<bool> trigger = false.obs;
+  toggleTrigger() => trigger.toggle();
+
   RxList<Map<String, Object>> tasks = [
     {
-      'title': 'Load box',
+      'title': 'OffLoading & OnLoading boxes',
       'time': '07:00',
-      'slot': '07:00 - 8:00',
-      'subtitle': 'Load a large box with the following parcels:',
-      'ids': ['DHL XXYYZZ', 'GLS ZZYYXX', 'UPS AABBCD', 'FedEx CCDDEE'],
-      'status': 'current',
-      'boxSize': 'Large',
-      'type': '1'
+      'boxes': [
+        {
+          'id': 1,
+          'name': 'DHL XXYYZZ',
+          'action': 'off-load',
+          'status': 'Pending'
+        },
+        {
+          'id': 2,
+          'name': 'GLS ZZYYXX',
+          'action': 'off-load',
+          'status': 'Pending'
+        },
+        {
+          'id': 3,
+          'name': 'UPS AABBCD',
+          'action': 'on-load',
+          'status': 'Pending'
+        },
+        {
+          'id': 4,
+          'name': 'FedEx CCDDEE',
+          'action': 'on-load',
+          'status': 'Pending'
+        }
+      ],
+      'status': 'Active',
+      'type': 'box'
     },
     {
-      'title': 'Load box',
+      'title': 'Sorting Parcels',
       'time': '08:00',
-      'slot': '08:00 - 9:00',
-      'subtitle': 'Load a large box with the following parcels:',
-      'ids': ['DHL XXYYZZ', 'GLS ZZYYXX', 'UPS AABBCD', 'FedEx CCDDEE'],
-      'status': 'current',
-      'boxSize': 'Large',
-      'type': '2'
+      'parcels': [
+        {
+          'id': 1,
+          'name': 'DHL XXYYZZ',
+          'status': 'Pending',
+          'from': 'B1',
+          'to': 'B2'
+        },
+        {
+          'id': 2,
+          'name': 'GLS ZZYYXX',
+          'status': 'Done',
+          'from': 'B1',
+          'to': 'B2'
+        },
+        {
+          'id': 3,
+          'name': 'UPS AABBCD',
+          'action': 'on-load',
+          'status': 'Pending',
+          'from': 'B1',
+          'to': 'B2'
+        },
+        {
+          'id': 4,
+          'name': 'FedEx CCDDEE',
+          'status': 'Done',
+          'from': 'B1',
+          'to': 'B2'
+        }
+      ],
+      'status': 'Active',
+      'type': 'parcel'
     },
     {
-      'title': 'Load box',
+      'title': 'Bike Delivery',
       'time': '09:00',
-      'slot': '09:00 - 10:00',
-      'subtitle': 'Load a large box with the following parcels:',
-      'ids': ['DHL XXYYZZ', 'GLS ZZYYXX', 'UPS AABBCD', 'FedEx CCDDEE'],
+      'boxes': [
+        {'id': 1, 'name': 'DHL XXYYZZ', 'status': 'Pending'},
+        {'id': 2, 'name': 'GLS ZZYYXX', 'status': 'Pending'},
+        {'id': 3, 'name': 'UPS AABBCD', 'status': 'Pending'},
+        {'id': 4, 'name': 'FedEx CCDDEE', 'status': 'Pending'}
+      ],
       'status': 'current',
-      'boxSize': 'Large',
-      'type': '3'
-    },
-    {
-      'title': 'Load box',
-      'time': '10:00',
-      'slot': '10:00 - 11:00',
-      'subtitle': 'Load a large box with the following parcels:',
-      'ids': ['DHL XXYYZZ', 'GLS ZZYYXX', 'UPS AABBCD', 'FedEx CCDDEE'],
-      'status': 'current',
-      'boxSize': 'Large',
-    },
-    {
-      'title': 'Load box',
-      'time': '11:00',
-      'slot': '11:00 - 12:00',
-      'subtitle': 'Load a large box with the following parcels:',
-      'ids': ['DHL XXYYZZ', 'GLS ZZYYXX', 'UPS AABBCD', 'FedEx CCDDEE'],
-      'status': 'current',
-      'boxSize': 'Large',
-    },
-    {
-      'title': 'Load box',
-      'time': '12:00',
-      'slot': '12:00 - 13:00',
-      'subtitle': 'Load a large box with the following parcels:',
-      'ids': ['DHL XXYYZZ', 'GLS ZZYYXX', 'UPS AABBCD', 'FedEx CCDDEE'],
-      'status': 'current',
-      'boxSize': 'Large',
-    },
-    {
-      'title': 'Load box',
-      'time': '13:00',
-      'slot': '13:00 - 14:00',
-      'subtitle': 'Load a large box with the following parcels:',
-      'ids': ['DHL XXYYZZ', 'GLS ZZYYXX', 'UPS AABBCD', 'FedEx CCDDEE'],
-      'status': 'current',
-      'boxSize': 'Large',
+      'type': 'bike'
     },
   ].obs;
   // @override
@@ -93,17 +110,45 @@ class HomeController extends BaseController {
     scan.value = v;
   }
 
+  void setDoor(bool v) {
+    door.value = v;
+  }
+
   void setCheckOut() {
     checkOut.value = DateFormat('hh:mm').format(DateTime.now());
   }
 
-  void setChecklist() {
-    checklist = ['Offload Box a1', 'Offload Box a2', 'Onload Box a3'].obs;
-    checklistBool = [false, false, false].obs;
+  void setStatus(int index, String field, int id, String status) {
+    final task = tasks[index];
+    if (!task.containsKey(field)) {
+      Logger.log('Error: field $field not found in task');
+      return;
+    }
+    final boxes = task[field] as List;
+    final box = boxes.firstWhere((box) => box['id'] == id);
+    if (box == null) {
+      Logger.log('Error: box with id $id not found in task');
+      return;
+    }
+    if (box['status'] == 'Done') {
+      CustomSnackBar.showCustomErrorSnackBar(
+          title: 'Error', message: 'This box/parcel already scanned');
+      return;
+    }
+    box['status'] = status;
   }
 
-  void toggleChecklistBool(int index) {
-    checklistBool![index] = !checklistBool![index];
+  void setTaskStatus(int index) {
+    if (index < 0 || index >= tasks.length) {
+      Logger.log('Error: invalid index $index');
+      return;
+    }
+    ;
+    tasks[index]['status'] = 'Done';
+  }
+
+  List<Map<String, Object>> getNotDoneTasks() {
+    return tasks.where((task) => task['status'] != 'Done').toList();
   }
 
   Future<void> getTasks() async {

@@ -9,6 +9,7 @@ class TasksList extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = context.width;
+    final tasks = controller.getNotDoneTasks();
     return Scaffold(
       backgroundColor: HexColor('#f5f5f4'),
       body: Container(
@@ -32,8 +33,8 @@ class TasksList extends GetView<HomeController> {
                       width: 15,
                     ),
                     Text(
-                      controller.tasks.isNotEmpty
-                          ? 'You have ${controller.tasks.length} tasks for today'
+                      tasks.isNotEmpty
+                          ? 'You have ${tasks.length} tasks for today'
                           : "You have no tasks today!",
                     ),
                   ],
@@ -41,10 +42,10 @@ class TasksList extends GetView<HomeController> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: controller.tasks.length,
+                  itemCount: tasks.length,
                   itemBuilder: (BuildContext context, int index) {
                     return TaskTimeline(
-                      task: controller.tasks[index],
+                      task: tasks[index],
                       onTaskClick: () {
                         onTaskClick(index);
                       },

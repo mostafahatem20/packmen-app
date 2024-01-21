@@ -24,14 +24,14 @@ class TaskTimeline extends StatelessWidget {
               task['time'],
               style: TextStyle(color: HexColor('#D0AD5E')),
             ),
-            _buildCard(Colors.white, task['title'], task['slot'])
+            _buildCard(Colors.white, task['title'], task['status'])
           ],
         ))
       ]),
     );
   }
 
-  Widget _buildCard(Color bgColor, String title, String slot) {
+  Widget _buildCard(Color bgColor, String title, String status) {
     return Container(
       width: 250,
       decoration: BoxDecoration(
@@ -49,14 +49,23 @@ class TaskTimeline extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+              SizedBox(
+                width: 150,
+                child: Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
               const SizedBox(height: 10),
-              Text(
-                slot,
-                style: const TextStyle(color: Colors.grey),
+              Wrap(
+                children: [
+                  const Text('Status: '),
+                  const SizedBox(width: 8),
+                  Text(
+                    status,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ],
               ),
             ],
           ),

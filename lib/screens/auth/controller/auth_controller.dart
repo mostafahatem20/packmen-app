@@ -104,8 +104,7 @@ class AuthController extends BaseController {
         Get.offAllNamed(AppRoutes.homeScreen);
       } else {
         CustomSnackBar.showCustomErrorSnackBar(
-            title: 'Internal Server Error',
-            message: 'Please contact an administrator');
+            title: 'Unauthorized', message: 'Invalid credentials.');
       }
     } catch (e) {
       Logger.log(e);
