@@ -4,7 +4,6 @@ import 'package:packmen_app/screens/home/components/custom_drawer/home_drawer.da
 import 'package:packmen_app/screens/home/components/feedback_screen.dart';
 import 'package:packmen_app/screens/home/components/help_screen.dart';
 import 'package:packmen_app/screens/home/components/home_screen.dart';
-import 'package:packmen_app/screens/home/components/invite_friend_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:packmen_app/screens/home/components/tasks.dart';
 
@@ -70,11 +69,6 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         case DrawerIndex.FeedBack:
           setState(() {
             screenView = FeedbackScreen();
-          });
-          break;
-        case DrawerIndex.Invite:
-          setState(() {
-            screenView = InviteFriend();
           });
           break;
         default:

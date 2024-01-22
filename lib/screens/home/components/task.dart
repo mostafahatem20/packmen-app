@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:packmen_app/core/app_export.dart';
 import 'package:packmen_app/screens/home/controller/home_controller.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:packmen_app/screens/home/models/task_model.dart';
 import 'package:packmen_app/widgets/custom_snackbar.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -54,7 +55,7 @@ class Task extends GetView<HomeController> {
                       width: 8,
                     ),
                     Text(
-                      task['title'] as String,
+                      task.title as String,
                       style: TextStyle(
                         fontFamily: "NexaBold",
                         fontSize: screenWidth / 18,
@@ -63,10 +64,9 @@ class Task extends GetView<HomeController> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                if (task['type'] == 'box') ..._buildBox(task, screenWidth),
-                if (task['type'] == 'parcel')
-                  ..._buildParcel(task, screenWidth),
-                if (task['type'] == 'bike') ..._buildBike(task),
+                if (task.type == 'box') ..._buildBox(task, screenWidth),
+                if (task.type == 'parcel') ..._buildParcel(task, screenWidth),
+                if (task.type == 'bycicle') ..._buildBike(task),
               ],
             ),
           )),
@@ -157,7 +157,7 @@ class Task extends GetView<HomeController> {
     );
   }
 
-  List<Widget> _buildBox(dynamic task, double screenWidth) {
+  List<Widget> _buildBox(TaskModel task, double screenWidth) {
     if (controller.door.value == false) {
       return [
         Container(
@@ -185,35 +185,41 @@ class Task extends GetView<HomeController> {
         )
       ];
     } else {
+      final offLoading =
+          task.boxes!.where((element) => element.action == "off-load");
+      final onLoading =
+          task.boxes!.where((element) => element.action == "on-load");
       return [
-        const Text(
-          "OffLoading Boxes: ",
-        ),
+        if (offLoading.isNotEmpty)
+          const Text(
+            "OffLoading Boxes: ",
+          ),
         const SizedBox(height: 10),
-        ...task['boxes'].map((e) {
-          if (e['action'] == "off-load") {
+        ...offLoading.map((e) {
+          if (e.action == "off-load") {
             return CheckboxListTile(
-              value: e['status'] == "Done",
+              value: e.done,
               onChanged: (bool? value) {},
               enabled: false,
-              title: Text(e['name']),
+              title: Text("Box #${e.id}"),
               activeColor: AppTheme.themeColor,
             );
           }
           return const SizedBox();
         }),
         const SizedBox(height: 10),
-        const Text(
-          "OnLoading Boxes: ",
-        ),
+        if (onLoading.isNotEmpty)
+          const Text(
+            "OnLoading Boxes: ",
+          ),
         const SizedBox(height: 10),
-        ...task['boxes'].map((e) {
-          if (e['action'] == "on-load") {
+        ...onLoading.map((e) {
+          if (e.action == "on-load") {
             return CheckboxListTile(
-              value: e['status'] == "Done",
+              value: e.done,
               onChanged: (bool? value) {},
               enabled: false,
-              title: Text(e['name']),
+              title: Text("Box #${e.id}"),
               activeColor: AppTheme.themeColor,
             );
           }
@@ -222,13 +228,13 @@ class Task extends GetView<HomeController> {
         const SizedBox(height: 10),
         if (controller.scan.value)
           _buildScanner((i) {
-            controller.setStatus(0, 'boxes', i, 'Done');
+            controller.setStatus(task.id!, 'boxes', i);
           }, screenWidth)
-        else if (task['boxes'].every((box) => box['status'] == 'Done'))
+        else if (task.boxes!.every((box) => box.done == true))
           GestureDetector(
             onTap: () {
               controller.setDoor(false);
-              controller.setTaskStatus(0);
+              controller.setTaskStatus(task.id!);
               onBack();
             },
             child: Container(
@@ -254,26 +260,26 @@ class Task extends GetView<HomeController> {
     }
   }
 
-  List<Widget> _buildParcel(dynamic task, double screenWidth) {
+  List<Widget> _buildParcel(TaskModel task, double screenWidth) {
     return [
-      ...task['parcels'].map((e) {
+      ...task.parcels!.map((e) {
         return CheckboxListTile(
-          value: e['status'] == "Done",
+          value: e.done,
           onChanged: (bool? value) {},
           enabled: false,
-          title: Text('Move ${e['name']} from ${e['from']} to ${e['to']}'),
+          title: Text('Move ${e.code} from ${e.fromBox} to ${e.toBox}'),
           activeColor: AppTheme.themeColor,
         );
       }),
       const SizedBox(height: 10),
       if (controller.scan.value)
         _buildScanner((i) {
-          controller.setStatus(1, 'parcels', i, 'Done');
+          controller.setStatus(task.id!, 'parcels', i);
         }, screenWidth)
-      else if (task['parcels'].every((box) => box['status'] == 'Done'))
+      else if (task.parcels!.every((parcel) => parcel.done == true))
         GestureDetector(
           onTap: () {
-            controller.setTaskStatus(1);
+            controller.setTaskStatus(task.id!);
             onBack();
           },
           child: Container(
@@ -298,7 +304,7 @@ class Task extends GetView<HomeController> {
     ];
   }
 
-  List<Widget> _buildBike(dynamic task) {
+  List<Widget> _buildBike(TaskModel task) {
     // TODO: when task is a model we can refresh its state correctly
     print(controller.trigger.value);
     return [
@@ -306,26 +312,22 @@ class Task extends GetView<HomeController> {
         "Load on Bike: ",
       ),
       const SizedBox(height: 10),
-      ...task['boxes'].map((e) {
+      ...task.boxes!.map((e) {
         return CheckboxListTile(
-          value: e['status'] == "Done",
+          value: e.done,
           onChanged: (bool? value) {
-            if (value == true) {
-              controller.setStatus(2, 'boxes', e['id'], 'Done');
-            } else {
-              controller.setStatus(2, 'boxes', e['id'], 'Pending');
-            }
+            controller.setStatus(task.id, 'boxes', e.id);
             controller.toggleTrigger();
           },
-          title: Text(e['name']),
+          title: Text("Box #${e.id}"),
           activeColor: AppTheme.themeColor,
         );
       }),
       const SizedBox(height: 10),
       GestureDetector(
         onTap: () {
-          if (task['boxes'].every((box) => box['status'] == 'Done')) {
-            controller.setTaskStatus(2);
+          if (task.boxes!.every((box) => box.done == true)) {
+            controller.setTaskStatus(task.id!);
             onBack();
           } else {
             CustomSnackBar.showCustomErrorSnackBar(

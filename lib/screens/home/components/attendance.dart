@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:packmen_app/core/app_export.dart';
+import 'package:packmen_app/screens/auth/controller/auth_controller.dart';
 import 'package:packmen_app/screens/home/controller/home_controller.dart';
 
 class Attendance extends GetView<HomeController> {
@@ -19,7 +20,7 @@ class Attendance extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = context.width;
-
+    final authController = Get.find<AuthController>();
     return Scaffold(
         backgroundColor: HexColor('#f5f5f4'),
         body: SingleChildScrollView(
@@ -42,34 +43,36 @@ class Attendance extends GetView<HomeController> {
                   Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Mostafa Abdelrahman",
+                      "${authController.user.value.name}",
                       style: TextStyle(
                         fontFamily: "NexaBold",
                         fontSize: screenWidth / 18,
                       ),
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            'You are assigned to station "Klinikum Großhadern"',
+                  if (controller.isLoading.value == false)
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'You are assigned to station "${controller.moveTask().locationName}"',
+                            ),
                           ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            _openGoogleMaps(geoLocation);
-                          },
-                          child: const Icon(
-                            Icons.location_on,
-                            color: AppTheme.themeColor,
+                          GestureDetector(
+                            onTap: () {
+                              _openGoogleMaps(
+                                  controller.moveTask().geoLocation!);
+                            },
+                            child: const Icon(
+                              Icons.location_on,
+                              color: AppTheme.themeColor,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
                   Container(
                     alignment: Alignment.centerLeft,
                     margin: const EdgeInsets.only(top: 32),

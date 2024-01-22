@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:packmen_app/core/app_export.dart';
+import 'package:packmen_app/screens/home/models/task_model.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class TaskTimeline extends StatelessWidget {
-  final Map<String, dynamic> task;
+  final TaskModel task;
   final void Function() onTaskClick;
   const TaskTimeline(
       {super.key, required this.task, required this.onTaskClick});
@@ -21,17 +22,17 @@ class TaskTimeline extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              task['time'],
+              DateFormat.Hm().format(task.time!),
               style: TextStyle(color: HexColor('#D0AD5E')),
             ),
-            _buildCard(Colors.white, task['title'], task['status'])
+            _buildCard(Colors.white, task.title!, task.done!)
           ],
         ))
       ]),
     );
   }
 
-  Widget _buildCard(Color bgColor, String title, String status) {
+  Widget _buildCard(Color bgColor, String title, bool done) {
     return Container(
       width: 250,
       decoration: BoxDecoration(
@@ -60,9 +61,9 @@ class TaskTimeline extends StatelessWidget {
               Wrap(
                 children: [
                   const Text('Status: '),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   Text(
-                    status,
+                    done ? 'Done' : 'Pending',
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ],

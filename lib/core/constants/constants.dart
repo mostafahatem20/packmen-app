@@ -9,12 +9,8 @@ class Constants {
   );
   static const String apiWebHost = String.fromEnvironment(
     'API_HOST',
-    defaultValue: 'localhost',
+    defaultValue: 'localhost:3000',
   );
-  static const String apiPort = String.fromEnvironment(
-    'API_PORT',
-    defaultValue: '3000',
-  );
-  static const String apiBaseURL = '$apiProtocol://$apiHost:$apiPort';
-  static const String apiWebURL = '$apiProtocol://$apiWebHost:$apiPort';
+  static const String apiBaseURL = '$apiProtocol://$apiHost';
+  static const String apiWebURL = '$apiProtocol://$apiWebHost';
 }

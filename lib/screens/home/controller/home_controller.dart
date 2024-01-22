@@ -1,7 +1,6 @@
 import 'dart:io';
-
+import 'package:packmen_app/screens/home/models/task_model.dart';
 import 'package:packmen_app/widgets/custom_snackbar.dart';
-
 import 'package:packmen_app/core/app_export.dart';
 
 class HomeController extends BaseController {
@@ -13,94 +12,13 @@ class HomeController extends BaseController {
   Rx<bool> trigger = false.obs;
   toggleTrigger() => trigger.toggle();
 
-  RxList<Map<String, Object>> tasks = [
-    {
-      'title': 'OffLoading & OnLoading boxes',
-      'time': '07:00',
-      'boxes': [
-        {
-          'id': 1,
-          'name': 'DHL XXYYZZ',
-          'action': 'off-load',
-          'status': 'Pending'
-        },
-        {
-          'id': 2,
-          'name': 'GLS ZZYYXX',
-          'action': 'off-load',
-          'status': 'Pending'
-        },
-        {
-          'id': 3,
-          'name': 'UPS AABBCD',
-          'action': 'on-load',
-          'status': 'Pending'
-        },
-        {
-          'id': 4,
-          'name': 'FedEx CCDDEE',
-          'action': 'on-load',
-          'status': 'Pending'
-        }
-      ],
-      'status': 'Active',
-      'type': 'box'
-    },
-    {
-      'title': 'Sorting Parcels',
-      'time': '08:00',
-      'parcels': [
-        {
-          'id': 1,
-          'name': 'DHL XXYYZZ',
-          'status': 'Pending',
-          'from': 'B1',
-          'to': 'B2'
-        },
-        {
-          'id': 2,
-          'name': 'GLS ZZYYXX',
-          'status': 'Done',
-          'from': 'B1',
-          'to': 'B2'
-        },
-        {
-          'id': 3,
-          'name': 'UPS AABBCD',
-          'action': 'on-load',
-          'status': 'Pending',
-          'from': 'B1',
-          'to': 'B2'
-        },
-        {
-          'id': 4,
-          'name': 'FedEx CCDDEE',
-          'status': 'Done',
-          'from': 'B1',
-          'to': 'B2'
-        }
-      ],
-      'status': 'Active',
-      'type': 'parcel'
-    },
-    {
-      'title': 'Bike Delivery',
-      'time': '09:00',
-      'boxes': [
-        {'id': 1, 'name': 'DHL XXYYZZ', 'status': 'Pending'},
-        {'id': 2, 'name': 'GLS ZZYYXX', 'status': 'Pending'},
-        {'id': 3, 'name': 'UPS AABBCD', 'status': 'Pending'},
-        {'id': 4, 'name': 'FedEx CCDDEE', 'status': 'Pending'}
-      ],
-      'status': 'current',
-      'type': 'bike'
-    },
-  ].obs;
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   getTasks();
-  // }
+  RxList tasks = [].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    getTasks();
+  }
 
   void setCheckIn() {
     checkIn.value = DateFormat('hh:mm').format(DateTime.now());
@@ -118,46 +36,52 @@ class HomeController extends BaseController {
     checkOut.value = DateFormat('hh:mm').format(DateTime.now());
   }
 
-  void setStatus(int index, String field, int id, String status) {
-    final task = tasks[index];
-    if (!task.containsKey(field)) {
-      Logger.log('Error: field $field not found in task');
-      return;
+  void setStatus(int? taskId, String field, int? id) {
+    final task =
+        tasks.firstWhereOrNull((element) => element.id == taskId) as TaskModel;
+    if (field == 'boxes') {
+      final box = task.boxes!.firstWhere((box) => box.id == id);
+      if (box.done == true) {
+        CustomSnackBar.showCustomErrorSnackBar(
+            title: 'Error', message: 'This box is already scanned');
+        return;
+      }
+      box.done = true;
     }
-    final boxes = task[field] as List;
-    final box = boxes.firstWhere((box) => box['id'] == id);
-    if (box == null) {
-      Logger.log('Error: box with id $id not found in task');
-      return;
+    if (field == 'parcels') {
+      final parcel = task.parcels!.firstWhere((parcel) => parcel.id == id);
+      if (parcel.done == true) {
+        CustomSnackBar.showCustomErrorSnackBar(
+            title: 'Error', message: 'This parcel is already scanned');
+        return;
+      }
+      parcel.done = true;
     }
-    if (box['status'] == 'Done') {
-      CustomSnackBar.showCustomErrorSnackBar(
-          title: 'Error', message: 'This box/parcel already scanned');
-      return;
-    }
-    box['status'] = status;
   }
 
-  void setTaskStatus(int index) {
-    if (index < 0 || index >= tasks.length) {
-      Logger.log('Error: invalid index $index');
-      return;
-    }
-    ;
-    tasks[index]['status'] = 'Done';
+  void setTaskStatus(int id) {
+    final task = tasks.firstWhereOrNull((element) => element.id == id);
+    task.done = true;
   }
 
-  List<Map<String, Object>> getNotDoneTasks() {
-    return tasks.where((task) => task['status'] != 'Done').toList();
+  TaskModel moveTask() {
+    return tasks.firstWhereOrNull((element) => element.type == 'move');
+  }
+
+  List<dynamic> getNotDoneTasks() {
+    return tasks.where((task) => !task.done! && task.type != 'move').toList();
   }
 
   Future<void> getTasks() async {
     try {
       isLoading.value = true;
-      final response = await get('/transactions/report');
+      final response = await get('/tasks');
       if (response.statusCode == HttpStatus.ok) {
-        // final result = DashboardReportModel.fromJson(response.body);
-        // report.value = result;
+        final data = response.body;
+        final taskList = data.map((taskData) {
+          return TaskModel.fromJson(taskData);
+        }).toList();
+        tasks.value = taskList;
       } else {
         final error = ErrorModel.fromJson(response.body);
         CustomSnackBar.showCustomErrorSnackBar(
