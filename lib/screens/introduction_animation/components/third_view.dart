@@ -104,7 +104,7 @@ class ThirdView extends StatelessWidget {
                   child: Container(
                     constraints: BoxConstraints(maxWidth: 350, maxHeight: 250),
                     child: Image.asset(
-                      'assets/introduction_animation/logo.jpeg',
+                      'assets/introduction_animation/logo.png',
                       fit: BoxFit.contain,
                     ),
                   ),

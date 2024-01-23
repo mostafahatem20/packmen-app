@@ -81,6 +81,12 @@ class HomeController extends BaseController {
         final taskList = data.map((taskData) {
           return TaskModel.fromJson(taskData);
         }).toList();
+        // sort the tasks by time
+        taskList.sort((a, b) {
+          final time1 = a.time as DateTime;
+          final time2 = b.time as DateTime;
+          return time1.compareTo(time2);
+        });
         tasks.value = taskList;
       } else {
         final error = ErrorModel.fromJson(response.body);
